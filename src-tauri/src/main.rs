@@ -13,8 +13,8 @@ async fn main_content() -> String {
 }
 
 #[tauri::command]
-fn parse_url(url: String) -> Result<WikiLink, String> {
-    Ok(WikiLink::parse(url).unwrap_or(WikiLink::default()))
+fn parse_url(url: String) -> WikiLink {
+    WikiLink::parse(url)
 }
 
 fn main() {
