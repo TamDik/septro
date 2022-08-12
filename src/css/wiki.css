@@ -1,0 +1,245 @@
+:root {
+    --page-base-height: 5.5em;
+}
+
+body {
+    font-family: sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+#wiki-page-base {
+    height: var(--page-base-height);
+}
+
+#wiki-head, #content, #wiki-footer {
+    margin-left: 11em;
+}
+
+#wiki-head {
+    width: calc(100% - 11em);
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#wiki-side {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 11em;
+}
+
+#access-area {
+    position: absolute;
+    width: 100%;
+    top: 6px;
+    height: 2.5em;
+    display: flex;
+}
+
+#access-area > * {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    color: #6c757d;
+    border: 1px solid #6c757d;
+    background-color: transparent;
+    margin: 0 -1px 0 0;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0;
+}
+
+#access-area > *:first-child {
+    border-radius: .25rem 0 0 .25rem;
+}
+
+#access-area > *:last-child {
+    border-radius: 0 .25rem .25rem 0;
+}
+
+#access-area button:not([disabled]) {
+    cursor: pointer;
+}
+
+#access-area button, #access-field {
+    z-index: 2;
+}
+
+#access-area button:not([disabled]):hover {
+    color: #fff;
+    background-color: #6c757d;
+}
+
+#access-area button:disabled {
+    z-index: 1;
+    border-color: #bfc8d0;
+    color: #bfc8d0;
+}
+
+#access-field {
+    flex: 1 1 auto;
+    margin-right: 8px;
+    text-align: left;
+    border-color: #6c757d;
+    outline: none;
+}
+
+#right-navigation, #left-navigation {
+    margin-top: calc(var(--page-base-height) - 2.5em);
+}
+
+#right-navigation {
+    float: right;
+}
+
+#left-navigation {
+    float: left;
+}
+
+.menu-tabs {
+    height: 2.5em;
+    background-image: linear-gradient(to bottom, rgba(167, 215, 249, 0) 0, #a7d7f9 100%);
+    padding-left: 1px;
+}
+
+.menu-tabs ul {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-tabs li {
+    float: left;
+    display: block;
+    background-image: linear-gradient(to top, #77c1f6 0, #e8f2f8 1px, #ffffff 100%);
+    height: 100%;
+    padding: 0;
+    margin: 0 1px 0 0;
+}
+
+.menu-tabs li.selected {
+    background-color: #fff;
+    background-image: none;
+}
+
+.menu-tabs li.selected a {
+    color: #000;
+    text-decoration: none;
+}
+
+.menu-tabs li a {
+    color: #0645ad;
+    display: block;
+    background-position: right bottom;
+    height: 3.131em;
+    padding: 1.25em 8px 0 8px;
+    font-size: 0.8em;
+}
+
+#search-field {
+    width: 15vw;
+    height: 2.15em;
+    border: 1px solid #a2a9b1;
+    border-radius: 2px;
+    margin: 0.7em 8px 0 8px;
+    font-size: 0.8em;
+    outline: none;
+}
+
+#main-logo {
+    width: 10em;
+    height: 10em;
+    margin: 0.5em;
+    padding: 0;
+}
+
+#wiki-side-main, .wiki-side-sub {
+    margin: 0 0.6em 0 1.4em;
+    padding: 0.25em 0;
+}
+
+#wiki-side-main {
+    margin: 1em 0.6em 0 1.4em;
+}
+
+.wiki-side-sub {
+    margin: 0 0.6em 0 1.4em;
+}
+
+.wiki-side-label {
+    border-bottom: 1px solid #c8ccd1;
+    color: #54595d;
+    margin: 0.5em 0 0 0;
+    font-size: 0.9em;
+}
+
+.menu-contents {
+    list-style: none none;
+    margin: 0;
+    padding: 0.3em 0 0 0;
+}
+
+.menu-contents li {
+    margin: 0;
+    padding: 0.25em 0;
+    font-size: 0.8em;
+    line-height: 1.125em;
+}
+
+.menu-contents a {
+    color: #0645ad;
+    text-decoration: none;
+}
+
+#content-head {
+    margin: 0 0 0.7em 0;
+    padding: 0;
+    border-bottom: 1px solid #a2a9b1;
+}
+
+#wiki-footer {
+    padding: 1.25em;
+}
+
+#content {
+    border: 1px solid #a7d7f9;
+    border-right-width: 0;
+    padding: 1.25em 1.5em 1.5em 1.5em;
+    margin-top: -1px;
+}
+
+#content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
+    margin-bottom: 0.4em;
+}
+
+#content h1, #content h2 {
+    border-bottom: 1px solid #a2a9b1;
+}
+
+#content h1 {
+    font-size: 1.8em;
+}
+
+#content h2 {
+    font-size: 1.5em;
+}
+
+#content h3, #content h4, #content h5, #content h6 {
+    font-size: 1.2em;
+}
+
+/* a[href^="http"] { */
+/*     background-image: url(../images/external-link.svg); */
+/*     background-position: center right; */
+/*     background-repeat: no-repeat; */
+/*     padding-right: 15px; */
+/* } */
+
+a.new {
+    color: #ba0000;
+}

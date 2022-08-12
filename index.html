@@ -1,13 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>septro</title>
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+
+    <div id="wiki-page-base"></div>
+    <div id="wiki-navigation">
+      <div id="wiki-head">
+        <div id="access-area">
+          <button id="go-back-button" type="button">←</button>
+          <button id="go-forward-button" type="button" disabled>→</button>
+          <input type="text" id="access-field">
+        </div>
+        <div id="left-navigation">
+          <nav class="menu-tabs">
+            <ul>
+              <li id="namespace-tab" class="selected"><a href="#">Main</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div id="right-navigation">
+          <nav class="menu-tabs">
+            <ul>
+              <li id="search-tab"><input type="search" placeholder="Search" id="search-field"></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div id="wiki-side">
+        <div id="main-logo"></div>
+        <div id="wiki-side-menu" class="name"></div>
+      </div>
+    </div>
+    <div id="content"></div>
+    <footer id="wiki-footer"></footer>
+
+    <script type="module" src="/src/ts/main.ts"></script>
   </body>
 </html>
