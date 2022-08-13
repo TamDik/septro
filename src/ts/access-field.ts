@@ -9,6 +9,6 @@ export function setupAccessField(element: HTMLInputElement) {
         }
         const url = element.value;
         const wikiLink = await invoke('parse_url', { url })
-        emit('page-transition', { wikiLink })
+        emit('page-transition', { wikilink: wikiLink })
     })
 }

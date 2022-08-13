@@ -1,16 +1,15 @@
-import { invoke } from '@tauri-apps/api/tauri'
 import { listen, Event } from '@tauri-apps/api/event'
-import { WikiLink } from './types'
+import { UpdateContentPayload, CoreErrorPayload } from './types'
 
 
 export function setupContent(element: HTMLDivElement) {
-    async function updateMainContent() {
-        element.innerHTML = await invoke('main_content')
-    }
+    listen('core-error', (event: Event<CoreErrorPayload>) => {
+        const { message } = event.payload
+        element.innerHTML = message
+    })
 
-    updateMainContent()
-
-    listen('page-transition', (event: Event<{ wikiLink: WikiLink }>) => {
-        updateMainContent()
+    listen('update-content', (event: Event<UpdateContentPayload>) => {
+        const { body } = event.payload
+        element.innerHTML = body
     })
 }

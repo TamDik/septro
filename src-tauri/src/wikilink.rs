@@ -1,8 +1,8 @@
-use serde::Serialize;
+use serde::{ Serialize, Deserialize };
 use std::str::FromStr;
 
 
-#[derive(Serialize, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub enum WikiType {
     Page,
     File,
@@ -30,7 +30,7 @@ impl Default for WikiType {
     }
 }
 
-#[derive(Serialize, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct WikiLink {
     pub namespace: String,
     pub wiki_type: WikiType,

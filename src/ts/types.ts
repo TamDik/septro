@@ -5,3 +5,11 @@ export type WikiLink = {
     wiki_type: WikiType,
     name: string,
 }
+
+export type CoreErrorPayload = {
+    message: string,
+}
+
+export type UpdateContentPayload = {
+    body: string,
+}
