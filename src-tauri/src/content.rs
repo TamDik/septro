@@ -1,0 +1,129 @@
+use crate::wikilink;
+use std::str::FromStr;
+use wikilink::{ WikiLink, WikiType };
+
+pub trait Content {
+    fn content(&self) -> String;
+
+    fn tabs(&self) -> Vec<Tab>;
+}
+
+#[derive(Debug)]
+pub struct Tab {
+    pub wikilink: WikiLink,
+    pub title: String,
+    pub selected: bool,
+}
+
+impl Tab {
+    fn selected(wikilink: WikiLink, title: impl Into<String>) -> Self {
+        Self { wikilink, title: title.into(), selected: true }
+    }
+
+    fn not_selected(wikilink: WikiLink, title: impl Into<String>) -> Self {
+        Self { wikilink, title: title.into(), selected: false }
+    }
+}
+
+#[derive(Debug)]
+enum Mode {
+    Read,
+    Edit,
+    History,
+}
+
+impl FromStr for Mode {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "read" => Ok(Mode::Read),
+            "edit" => Ok(Mode::Edit),
+            "history" => Ok(Mode::History),
+            _ => Err(()),
+        }
+    }
+}
+
+impl ToString for Mode {
+    fn to_string(&self) -> String {
+        match self {
+            Mode::Read => "read".to_string(),
+            Mode::Edit => "edit".to_string(),
+            Mode::History => "history".to_string(),
+        }
+    }
+}
+
+impl Into<String> for Mode {
+    fn into(self) -> String {
+        self.to_string()
+    }
+}
+
+pub struct Page {
+    mode: Mode,
+    wikilink: WikiLink,
+}
+
+impl Page {
+    pub fn new(wikilink: WikiLink) -> Self {
+        let mode = wikilink.get_query("mode").map_or(Mode::Read.to_string(), |mode| mode.to_string());
+        match Mode::from_str(&mode) {
+            Ok(mode) => Self { mode, wikilink },
+            Err(()) => Self { mode: Mode::Read, wikilink },
+        }
+    }
+}
+
+fn header(text: impl Into<String>) -> String {
+    format!("<h1 id=\"content-head\">{}</h1>", text.into())
+}
+
+fn body(text: impl Into<String>) -> String {
+    format!("<div id=\"content-body\">{}</div>", text.into())
+}
+
+impl Content for Page {
+    fn content(&self) -> String {
+        let page_name = self.wikilink.base();
+        let header = match &self.mode {
+            Mode::Read => {
+                header(page_name)
+            },
+            Mode::Edit => {
+                header(format!("editing {}", page_name))
+            },
+            Mode::History => {
+                header(format!("Revision history of \"{}\"", page_name))
+            },
+        };
+        header
+    }
+
+    fn tabs(&self) -> Vec<Tab> {
+        let mut read = WikiLink::new(&self.wikilink.namespace, WikiType::Page, &self.wikilink.name);
+        let mut edit = WikiLink::new(&self.wikilink.namespace, WikiType::Page, &self.wikilink.name);
+        let mut hist = WikiLink::new(&self.wikilink.namespace, WikiType::Page, &self.wikilink.name);
+        read.add_query("mode", Mode::Read);
+        edit.add_query("mode", Mode::Edit);
+        hist.add_query("mode", Mode::History);
+        match &self.mode {
+            Mode::Read => vec![
+                Tab::selected(read, "Read"),
+                Tab::not_selected(edit, "Edit"),
+                Tab::not_selected(hist, "History"),
+            ],
+            Mode::Edit => vec![
+                Tab::not_selected(read, "Read"),
+                Tab::selected(edit, "Edit"),
+                Tab::not_selected(hist, "History"),
+            ],
+            Mode::History => vec![
+                Tab::not_selected(read, "Read"),
+                Tab::not_selected(edit, "Edit"),
+                Tab::selected(hist, "History"),
+            ],
+        }
+    }
+}

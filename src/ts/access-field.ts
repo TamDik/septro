@@ -1,5 +1,6 @@
 import { invoke } from '@tauri-apps/api/tauri'
-import { emit } from '@tauri-apps/api/event'
+import { emit, listen, Event } from '@tauri-apps/api/event'
+import { UpdateContentPayload, WikiLink } from './types'
 
 
 export function setupAccessField(element: HTMLInputElement) {
@@ -8,7 +9,11 @@ export function setupAccessField(element: HTMLInputElement) {
             return;
         }
         const url = element.value;
-        const wikiLink = await invoke('parse_url', { url })
+        const wikiLink = await invoke<WikiLink>('parse_url', { url })
         emit('page-transition', { wikilink: wikiLink })
+    })
+
+    listen('update-content', (event: Event<UpdateContentPayload>) => {
+        element.value = event.payload.href;
     })
 }

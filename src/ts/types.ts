@@ -4,6 +4,8 @@ export type WikiLink = {
     namespace: string,
     wiki_type: WikiType,
     name: string,
+    fragment: string | null,
+    queries: Map<string, string>,
 }
 
 export type CoreErrorPayload = {
@@ -11,5 +13,11 @@ export type CoreErrorPayload = {
 }
 
 export type UpdateContentPayload = {
+    href: string,
     body: string,
+    tabs: {
+        "href": string,
+        "title": string,
+        "selected": boolean,
+    }[]
 }

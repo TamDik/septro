@@ -152,10 +152,14 @@ a {
 }
 
 #main-logo {
-    width: 10em;
-    height: 10em;
-    margin: 0.5em;
+    width: 9em;
+    height: 9em;
+    margin: 0.5em 1em;
     padding: 0;
+}
+
+#main-logo img {
+    width: 100%;
 }
 
 #wiki-side-main, .wiki-side-sub {
