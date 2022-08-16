@@ -7,6 +7,8 @@ mod payload;
 mod wikilink;
 mod config;
 mod content;
+mod category;
+mod history;
 use content::Content;
 use tauri::Manager;
 use wikilink::WikiLink;

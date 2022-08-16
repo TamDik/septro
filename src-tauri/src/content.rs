@@ -89,13 +89,13 @@ impl Content for Page {
         let page_name = self.wikilink.base();
         let header = match &self.mode {
             Mode::Read => {
-                header(page_name)
+                header(page_name) + &body("body")
             },
             Mode::Edit => {
-                header(format!("editing {}", page_name))
+                header(format!("editing {}", page_name)) + &body("body")
             },
             Mode::History => {
-                header(format!("Revision history of \"{}\"", page_name))
+                header(format!("Revision history of \"{}\"", page_name)) + &body("body")
             },
         };
         header

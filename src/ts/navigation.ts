@@ -19,9 +19,9 @@ export function setupRightMenuTabs(element: HTMLDivElement) {
         let tabsHTML = '';
         for (const { title, selected, href } of tabs) {
             if (selected) {
-                tabsHTML += `<li class="selected"><a href="#" class="internal" data-wikilink="${href}">${title}</a></li>`
+                tabsHTML += `<li class="selected"><a href="${href}" class="internal" data-wikilink="${href}">${title}</a></li>`
             } else {
-                tabsHTML += `<li><a href="#" class="internal" data-wikilink="${href}">${title}</a></li>`
+                tabsHTML += `<li><a href="${href}" class="internal" data-wikilink="${href}">${title}</a></li>`
             }
         }
         element.innerHTML = `

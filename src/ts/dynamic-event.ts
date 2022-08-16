@@ -26,6 +26,8 @@ function addDynamicEventLister<K extends keyof HTMLElementTagNameMap>(
 
 export default function setup() {
     addDynamicEventLister('click', 'a', (event, element) => {
+        console.log(element.href);
+        console.log(new URL(element.href));
         let url = element.dataset.wikilink;
         if (url) {
             invoke<WikiLink>('parse_url', { url })

@@ -4,8 +4,8 @@ use std::collections::HashMap;
 use percent_encoding::{ utf8_percent_encode, NON_ALPHANUMERIC };
 
 
-const DEFAULT_NAMESPACE: &str = "Main";
-const DEFAULT_NAME: &str = "Main";
+pub const DEFAULT_NAMESPACE: &str = "Main";
+pub const DEFAULT_NAME: &str = "Main";
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]

@@ -14,6 +14,6 @@ export function setupAccessField(element: HTMLInputElement) {
     })
 
     listen('update-content', (event: Event<UpdateContentPayload>) => {
-        element.value = event.payload.href;
+        element.value = decodeURI(event.payload.href)
     })
 }
