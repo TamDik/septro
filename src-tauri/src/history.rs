@@ -36,16 +36,23 @@ fn deserialize_naive_date_time<'de, D: serde::Deserializer<'de>>(deserializer: D
     NaiveDateTime::parse_from_str(&buf, DATE_TIME_FORMAT).map_err(serde::de::Error::custom)
 }
 
+impl HistoryVersion {
+    fn relative_path(&self) -> path::PathBuf {
+        path::Path::new(self.filename.get(..2).unwrap()).join(&self.filename)
+    }
+}
+
 
 #[derive(Debug)]
 pub struct History {
+    root_dir: path::PathBuf,
     versions: Vec<HistoryVersion>,
     current: Vec<CurrentReference>,
 }
 
 impl History {
-    pub fn new() -> Self {
-        Self { versions: Vec::new(), current: Vec::new() }
+    pub fn new(root_dir: path::PathBuf) -> Self {
+        Self { root_dir, versions: Vec::new(), current: Vec::new() }
     }
 
     pub fn read(root_dir: path::PathBuf) -> Result<Self, std::io::Error> {
@@ -62,10 +69,11 @@ impl History {
         history_file.read_to_string(&mut buffer)?;
         let versions: Vec<HistoryVersion> = serde_json::from_str(&buffer)?;
 
-        Ok(Self { current, versions })
+        Ok(Self { root_dir, current, versions })
     }
 
-    pub fn save(&self, root_dir: path::PathBuf) -> Result<(), std::io::Error> {
+    pub fn save(&self) -> Result<(), std::io::Error> {
+        let root_dir = &self.root_dir;
         fs::create_dir_all(&root_dir).unwrap_or_else(|why| println!("{:?}", why.kind()));
 
         // save current.json
@@ -79,5 +87,36 @@ impl History {
         write!(&file, "{}", json_string)?;
 
         Ok(())
+    }
+
+    fn to_full_path(&self, version: &HistoryVersion) -> path::PathBuf {
+        self.root_dir.join(version.relative_path())
+    }
+
+    fn get_current_history_version(&self, name: String) -> Option<&HistoryVersion> {
+        let current = self.current.iter().find(|current| current.name == name)?;
+        self.versions.iter().find(|version| version.id == current.id)
+    }
+
+    pub fn get_file_path_by_name(&self, name: impl Into<String>) -> Option<path::PathBuf> {
+        let version = self.get_current_history_version(name.into())?;
+        Some(self.to_full_path(version))
+    }
+
+    fn rewind_history<'a>(&'a self, history: &'a HistoryVersion, version: i32) -> Option<&'a HistoryVersion> {
+        if history.version == version {
+            Some(history)
+        } else {
+            match &history.prev {
+                None => None,
+                Some(id) => self.rewind_history(self.versions.iter().find(|v| &v.id == id)?, version),
+            }
+        }
+    }
+
+    pub fn get_file_path_by_version(&self, name: impl Into<String>, version: i32) -> Option<path::PathBuf> {
+        let current = self.get_current_history_version(name.into())?;
+        let history = self.rewind_history(current, version)?;
+        Some(self.to_full_path(history))
     }
 }
