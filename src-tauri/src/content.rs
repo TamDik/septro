@@ -61,6 +61,16 @@ impl Into<String> for Mode {
     }
 }
 
+impl From<&WikiLink> for Mode {
+    fn from(wikilink: &WikiLink) -> Self {
+        let mode = wikilink.get_query("mode").map_or(Mode::Read.to_string(), |mode| mode.to_string());
+        match Mode::from_str(&mode) {
+            Ok(mode) => mode,
+            Err(()) => Mode::Read,
+        }
+    }
+}
+
 pub struct Page {
     mode: Mode,
     wikilink: WikiLink,
@@ -68,20 +78,17 @@ pub struct Page {
 
 impl Page {
     pub fn new(wikilink: WikiLink) -> Self {
-        let mode = wikilink.get_query("mode").map_or(Mode::Read.to_string(), |mode| mode.to_string());
-        match Mode::from_str(&mode) {
-            Ok(mode) => Self { mode, wikilink },
-            Err(()) => Self { mode: Mode::Read, wikilink },
-        }
+        let mode = Mode::from(&wikilink);
+        Self { mode, wikilink }
     }
 }
 
 fn header(text: impl Into<String>) -> String {
-    format!("<h1 id=\"content-head\">{}</h1>", text.into())
+    format!(r#"<h1 id="content-head">{}</h1>"#, text.into())
 }
 
 fn body(text: impl Into<String>) -> String {
-    format!("<div id=\"content-body\">{}</div>", text.into())
+    format!(r#"<div id="content-body">{}</div>"#, text.into())
 }
 
 impl Content for Page {
@@ -95,7 +102,7 @@ impl Content for Page {
                 header(format!("editing {}", page_name)) + &body("body")
             },
             Mode::History => {
-                header(format!("Revision history of \"{}\"", page_name)) + &body("body")
+                header(format!(r#"Revision history of "{}""#, page_name)) + &body("body")
             },
         };
         header
@@ -125,5 +132,24 @@ impl Content for Page {
                 Tab::selected(hist, "History"),
             ],
         }
+    }
+}
+
+
+pub struct UnknownNamespace {
+    pub wikilink: WikiLink
+}
+
+impl Content for UnknownNamespace {
+    fn tabs(&self) -> Vec<Tab> {
+        let wikilink = WikiLink::new(&self.wikilink.namespace, self.wikilink.wiki_type, &self.wikilink.name);
+        vec![
+            Tab::selected(wikilink, "Read"),
+        ]
+    }
+
+    fn content(&self) -> String {
+        header(self.wikilink.base()) +
+        &body("The namespace you are looking for doesn't exist or an other error occurred. Choose a new direction, or you can create this namespace.")
     }
 }

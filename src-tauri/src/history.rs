@@ -55,6 +55,12 @@ impl History {
         Self { root_dir, versions: Vec::new(), current: Vec::new() }
     }
 
+    pub fn add(&mut self, name: &str) {
+        let version = self.get_current_history_version(name.to_string());
+        let current = self.get_current_reference(name.to_string());
+        println!("{:?} {:?}", version, current);
+    }
+
     pub fn read(root_dir: path::PathBuf) -> Result<Self, std::io::Error> {
         let mut current_file = fs::File::open(root_dir.join("current.json"))?;
         let mut history_file = fs::File::open(root_dir.join("history.json"))?;
@@ -93,13 +99,17 @@ impl History {
         self.root_dir.join(version.relative_path())
     }
 
-    fn get_current_history_version(&self, name: String) -> Option<&HistoryVersion> {
-        let current = self.current.iter().find(|current| current.name == name)?;
+    fn get_current_reference(&self, name: &str) -> Option<&CurrentReference> {
+        self.current.iter().find(|current| current.name == name)
+    }
+
+    fn get_current_history_version(&self, name: &str) -> Option<&HistoryVersion> {
+        let current = self.get_current_reference(name)?;
         self.versions.iter().find(|version| version.id == current.id)
     }
 
     pub fn get_file_path_by_name(&self, name: impl Into<String>) -> Option<path::PathBuf> {
-        let version = self.get_current_history_version(name.into())?;
+        let version = self.get_current_history_version(&name.into())?;
         Some(self.to_full_path(version))
     }
 
@@ -115,7 +125,7 @@ impl History {
     }
 
     pub fn get_file_path_by_version(&self, name: impl Into<String>, version: i32) -> Option<path::PathBuf> {
-        let current = self.get_current_history_version(name.into())?;
+        let current = self.get_current_history_version(&name.into())?;
         let history = self.rewind_history(current, version)?;
         Some(self.to_full_path(history))
     }

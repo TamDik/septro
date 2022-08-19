@@ -77,6 +77,22 @@ impl WikiLink {
         }
     }
 
+    pub fn page(namespace: impl Into<String>, name: impl Into<String>) -> Self {
+        Self::new(namespace, WikiType::Page, name)
+    }
+
+    pub fn file(namespace: impl Into<String>, name: impl Into<String>) -> Self {
+        Self::new(namespace, WikiType::File, name)
+    }
+
+    pub fn category(namespace: impl Into<String>, name: impl Into<String>) -> Self {
+        Self::new(namespace, WikiType::Category, name)
+    }
+
+    pub fn special(namespace: impl Into<String>, name: impl Into<String>) -> Self {
+        Self::new(namespace, WikiType::Special, name)
+    }
+
     pub fn get_query(&self, key: &str) -> Option<&String> {
         self.queries.get(&key.to_string())
     }
@@ -90,7 +106,7 @@ impl WikiLink {
     }
 
     pub fn base(&self) -> String {
-        let mut base = format!("{}", self.name);
+        let mut base = self.name.to_string();
         if self.wiki_type != WikiType::Page {
             base = format!("{}:{}", self.wiki_type.to_string(), base)
         }

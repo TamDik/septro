@@ -3,21 +3,23 @@
     windows_subsystem = "windows"
 )]
 
-mod payload;
-mod wikilink;
+mod category;
 mod config;
 mod content;
-mod category;
 mod history;
+mod payload;
+mod wiki;
+mod wikilink;
 use content::Content;
-use tauri::Manager;
 use wikilink::WikiLink;
+use wiki::Wiki;
 
 #[tauri::command]
 fn parse_url(url: String) -> WikiLink {
     WikiLink::parse(url)
 }
 
+// TODO: move to Wiki
 fn content(wikilink: WikiLink) -> payload::UpdateContentPayload {
     let href = wikilink.href();
     let page = content::Page::new(wikilink);
