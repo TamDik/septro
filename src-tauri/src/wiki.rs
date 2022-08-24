@@ -49,12 +49,12 @@ impl Namespace {
         self.history.file_description.add(name);
     }
 
-    pub fn get_content(&self, wikilink: WikiLink) -> String {
+    pub fn get_content(&self, wikilink: WikiLink) -> Box<dyn Content> {
         match wikilink.wiki_type {
-            WikiType::Page => content::Page::new(wikilink).content(),
-            WikiType::File => content::Page::new(wikilink).content(),
-            WikiType::Category => content::Page::new(wikilink).content(),
-            WikiType::Special => content::Page::new(wikilink).content(),
+            WikiType::Page => Box::new(content::Page::new(wikilink)),
+            WikiType::File => Box::new(content::Page::new(wikilink)),
+            WikiType::Category => Box::new(content::Page::new(wikilink)),
+            WikiType::Special => Box::new(content::Page::new(wikilink)),
         }
     }
 }
@@ -135,9 +135,9 @@ impl Wiki {
         }
     }
 
-    pub fn get_content(&self, wikilink: WikiLink) -> String {
+    pub fn get_content(&self, wikilink: WikiLink) -> Box<dyn Content> {
         match self.get_namespace(&wikilink.namespace) {
-            None => return content::UnknownNamespace {wikilink}.content(),
+            None => Box::new(content::UnknownNamespace {wikilink}),
             Some(namespace) => namespace.get_content(wikilink),
         }
     }

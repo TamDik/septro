@@ -5,19 +5,8 @@ use std::io::prelude::Write;
 use serde::{ Serialize, Deserialize };
 use crate::wikilink::DEFAULT_NAMESPACE;
 use crate::{ category, history };
-use rand::Rng;
+use crate::utils::generate_random_string;
 
-
-fn generate_random_string(len: i8) -> String {
-    let chars: Vec<char> = "0123456789abcdefghijklmnopqrstuvwxyz".chars().collect();
-    let chars_len = chars.len();
-    let mut chosen: String = String::new();
-    for _ in 1..=len {
-        let rand_num = rand::thread_rng().gen_range(0..chars_len);
-        chosen.push(chars[rand_num]);
-    }
-    chosen
-}
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag="type")]
@@ -142,10 +131,10 @@ fn new_namespace(name: &str, root_path: path::PathBuf) -> Result<(), std::io::Er
     fs::create_dir_all(&root_path)?;
     write_json(root_path.join("config.json"), NamespaceConfig::new(name))?;
 
-    history::History::new().save(root_path.join("Page"))?;
-    history::History::new().save(root_path.join("File"))?;
-    history::History::new().save(root_path.join("FileDescription"))?;
-    history::History::new().save(root_path.join("Category"))?;
+    history::History::new(root_path.join("Page")).save()?;
+    history::History::new(root_path.join("File")).save()?;
+    history::History::new(root_path.join("FileDescription")).save()?;
+    history::History::new(root_path.join("Category")).save()?;
 
     category::CategoryReference::new().save(root_path)?;
     Ok(())

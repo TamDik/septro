@@ -1,7 +1,9 @@
 use std::{ fs, path };
 use std::io::{ Write, Read };
-use chrono::NaiveDateTime;
+use chrono::{ NaiveDateTime, offset::Utc };
 use serde::{ Serialize, Deserialize };
+use crate::utils::generate_random_string;
+
 
 type HistoryVersionId = String;
 
@@ -37,6 +39,32 @@ fn deserialize_naive_date_time<'de, D: serde::Deserializer<'de>>(deserializer: D
 }
 
 impl HistoryVersion {
+    fn new(name: &str) -> Self {
+        HistoryVersion {
+            id: generate_random_string(16),
+            name: name.to_string(),
+            version: 1,
+            next: None,
+            prev: None,
+            created: Utc::now().naive_utc(),
+            comment: "".to_string(),
+            filename: "".to_string(),
+        }
+    }
+
+    fn next(version: &HistoryVersion) -> Self {
+        Self {
+            id: generate_random_string(16),
+            name: version.name.to_owned(),
+            version: version.version + 1,
+            next: None,
+            prev: Some(version.id.to_owned()),
+            created: Utc::now().naive_utc(),
+            comment: "".to_string(),
+            filename: "".to_string(),
+        }
+    }
+
     fn relative_path(&self) -> path::PathBuf {
         path::Path::new(self.filename.get(..2).unwrap()).join(&self.filename)
     }
@@ -56,9 +84,34 @@ impl History {
     }
 
     pub fn add(&mut self, name: &str) {
-        let version = self.get_current_history_version(name.to_string());
-        let current = self.get_current_reference(name.to_string());
-        println!("{:?} {:?}", version, current);
+        let current: Option<&mut CurrentReference> = self.current.iter_mut().find(|current| current.name == name);
+        match current {
+            None => {
+                // New
+                let history =  HistoryVersion::new(name);
+                let current = CurrentReference {
+                    id: history.id.to_owned(),
+                    name: name.to_string(),
+                };
+                self.versions.push(history);
+                self.current.push(current);
+            },
+            Some(current) => {
+                let version: Option<&mut HistoryVersion> = self.versions.iter_mut().find(|version| version.id == current.id);
+                match version {
+                    Some(version) => {
+                        // Update
+                        let history = HistoryVersion::next(&version);
+                        version.next = Some(history.id.to_owned());
+                        current.id = history.id.to_owned();
+                        self.versions.push(history);
+                    }
+                    None => {
+                        unreachable!();
+                    },
+                }
+            }
+        }
     }
 
     pub fn read(root_dir: path::PathBuf) -> Result<Self, std::io::Error> {

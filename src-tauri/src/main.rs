@@ -8,36 +8,43 @@ mod config;
 mod content;
 mod history;
 mod payload;
+mod utils;
 mod wiki;
 mod wikilink;
+use tauri::Manager;
+use std::sync::Mutex;
 use content::Content;
-use wikilink::WikiLink;
 use wiki::Wiki;
+use wikilink::WikiLink;
 
 #[tauri::command]
 fn parse_url(url: String) -> WikiLink {
     WikiLink::parse(url)
 }
 
-// TODO: move to Wiki
-fn content(wikilink: WikiLink) -> payload::UpdateContentPayload {
+fn content(wiki: &Wiki, wikilink: WikiLink) -> payload::UpdateContentPayload {
     let href = wikilink.href();
-    let page = content::Page::new(wikilink);
+    let content = wiki.get_content(wikilink);
 
     payload::UpdateContentPayload {
         href,
-        body: page.content(),
-        tabs: page.tabs().iter().map(|tab| tab.into()).collect(),
+        body: content.content(),
+        tabs: content.tabs().iter().map(|tab| tab.into()).collect(),
     }
 }
 
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
+            let app_dir = tauri::api::path::app_dir(&app.config()).unwrap();
+            let wiki = Mutex::new(Wiki::new(app_dir));
+            app.manage(wiki);
+
             let app_ = app.handle();
             app.listen_global("setup", move |_| {
-                println!("{:?}", config::setup(&app_.config()));
-                app_.emit_all("update-content", content(WikiLink::default())).unwrap();
+                let wiki: tauri::State<Mutex<Wiki>> = app_.state();
+                let wiki = wiki.lock().unwrap();
+                app_.emit_all("update-content", content(&wiki, WikiLink::default())).unwrap();
             });
 
             let app_ = app.handle();
@@ -46,7 +53,9 @@ fn main() {
                     Some(payload) => {
                         match serde_json::from_str::<payload::PageTransitionPayload>(payload) {
                             Ok(payload) => {
-                                app_.emit_all("update-content", content(payload.wikilink)).unwrap();
+                                let wiki: tauri::State<Mutex<Wiki>> = app_.state();
+                                let wiki = wiki.lock().unwrap();
+                                app_.emit_all("update-content", content(&wiki, payload.wikilink)).unwrap();
                             },
                             Err(err) => {
                                 app_.emit_all("core-error", payload::CoreErrorPayload { message: format!("{}", err) }).unwrap();
