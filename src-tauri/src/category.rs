@@ -103,7 +103,7 @@ pub struct CategoryReference {
 
 impl CategoryReference {
     pub fn new() -> Self {
-        Self { categories: Vec::new() }
+        Self { categories: vec![] }
     }
 
     pub fn read(root_dir: path::PathBuf) -> Result<Self, std::io::Error> {

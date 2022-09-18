@@ -19,5 +19,6 @@ export type UpdateContentPayload = {
         "href": string,
         "title": string,
         "selected": boolean,
-    }[]
+    }[],
+    scripts: ("markdownEditor")[],
 }

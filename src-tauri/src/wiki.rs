@@ -1,4 +1,4 @@
-use crate::content::{self, Content};
+use crate::content::{ self, Content };
 use crate::config::{ MasterConfig, NamespaceConfig };
 use crate::history::History;
 use crate::wikilink::{ DEFAULT_NAMESPACE, WikiLink, WikiType };
@@ -51,7 +51,14 @@ impl Namespace {
 
     pub fn get_content(&self, wikilink: WikiLink) -> Box<dyn Content> {
         match wikilink.wiki_type {
-            WikiType::Page => Box::new(content::Page::new(wikilink)),
+            WikiType::Page => {
+                if let Some(path) = self.history.page.get_file_path_by_name(&wikilink.name) {
+                    println!("{:?}", path);
+                    Box::new(content::Page::new(wikilink))
+                } else {
+                    Box::new(content::UnknownPage::new(wikilink))
+                }
+            },
             WikiType::File => Box::new(content::Page::new(wikilink)),
             WikiType::Category => Box::new(content::Page::new(wikilink)),
             WikiType::Special => Box::new(content::Page::new(wikilink)),

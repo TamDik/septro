@@ -11,9 +11,9 @@ mod payload;
 mod utils;
 mod wiki;
 mod wikilink;
+mod markdown;
 use tauri::Manager;
 use std::sync::Mutex;
-use content::Content;
 use wiki::Wiki;
 use wikilink::WikiLink;
 
@@ -22,14 +22,15 @@ fn parse_url(url: String) -> WikiLink {
     WikiLink::parse(url)
 }
 
-fn content(wiki: &Wiki, wikilink: WikiLink) -> payload::UpdateContentPayload {
+fn content(wiki: &Wiki, wikilink: WikiLink) -> payload::UpdateContent {
     let href = wikilink.href();
     let content = wiki.get_content(wikilink);
 
-    payload::UpdateContentPayload {
+    payload::UpdateContent {
         href,
         body: content.content(),
         tabs: content.tabs().iter().map(|tab| tab.into()).collect(),
+        scripts: content.scripts().iter().map(|script| script.into()).collect(),
     }
 }
 
@@ -51,19 +52,19 @@ fn main() {
             app.listen_global("page-transition", move |event| {
                 match event.payload() {
                     Some(payload) => {
-                        match serde_json::from_str::<payload::PageTransitionPayload>(payload) {
+                        match serde_json::from_str::<payload::PageTransition>(payload) {
                             Ok(payload) => {
                                 let wiki: tauri::State<Mutex<Wiki>> = app_.state();
                                 let wiki = wiki.lock().unwrap();
                                 app_.emit_all("update-content", content(&wiki, payload.wikilink)).unwrap();
                             },
                             Err(err) => {
-                                app_.emit_all("core-error", payload::CoreErrorPayload { message: format!("{}", err) }).unwrap();
+                                app_.emit_all("core-error", payload::CoreError { message: format!("{}", err) }).unwrap();
                             }
                         }
                     },
                     None => {
-                        app_.emit_all("core-error", payload::CoreErrorPayload { message: "payload error".to_string() }).unwrap();
+                        app_.emit_all("core-error", payload::CoreError { message: "payload error".to_string() }).unwrap();
                     },
                 }
             });

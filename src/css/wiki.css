@@ -2,6 +2,10 @@
     --page-base-height: 5.5em;
 }
 
+*, ::after, ::before {
+    box-sizing: border-box;
+}
+
 body {
     font-family: sans-serif;
 }

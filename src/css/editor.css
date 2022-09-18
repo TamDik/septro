@@ -1,0 +1,26 @@
+#editor-wrapper textarea, #editor-wrapper input {
+    border-radius: .25rem;
+    border: 1px solid #ced4da;
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+#editor-wrapper textarea:focus, #editor-wrapper input:focus {
+    box-shadow: none;
+    border-color: #6c757d;
+    outline: 0;
+}
+
+#editor-wrapper textarea {
+    height: 200px;
+    padding: .375rem .75rem;
+    resize: vertical;
+    width: 100%;
+}
+
+#editor-wrapper input {
+    padding: .375rem .75rem;
+    width: 100%;
+}

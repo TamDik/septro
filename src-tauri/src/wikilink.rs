@@ -77,6 +77,10 @@ impl WikiLink {
         }
     }
 
+    pub fn base_of(wikilink: &Self) -> Self {
+        Self::new(&wikilink.namespace, wikilink.wiki_type, &wikilink.name)
+    }
+
     pub fn page(namespace: impl Into<String>, name: impl Into<String>) -> Self {
         Self::new(namespace, WikiType::Page, name)
     }

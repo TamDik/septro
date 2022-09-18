@@ -21,6 +21,7 @@ tauri = { version = "1.0.5", features = ["api-all"] }
 percent-encoding = "2.1.0"
 rand = "0.8.5"
 chrono = "0.4.22"
+pulldown-cmark = "0.9.2"
 
 [features]
 # by default Tauri runs in production mode
