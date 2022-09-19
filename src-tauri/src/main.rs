@@ -38,7 +38,7 @@ fn main() {
     tauri::Builder::default()
         .setup(|app| {
             let app_dir = tauri::api::path::app_dir(&app.config()).unwrap();
-            let wiki = Mutex::new(Wiki::new(app_dir));
+            let wiki = Mutex::new(Wiki::from_master_config_file(&app_dir).unwrap_or_else(|_| Wiki::new(&app_dir)));
             app.manage(wiki);
 
             let app_ = app.handle();

@@ -1,6 +1,7 @@
 #editor-wrapper textarea, #editor-wrapper input {
     border-radius: .25rem;
     border: 1px solid #ced4da;
+    color: #495057;
     font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
     font-size: 1rem;
     font-weight: 400;
@@ -8,8 +9,8 @@
 }
 
 #editor-wrapper textarea:focus, #editor-wrapper input:focus {
-    box-shadow: none;
     border-color: #6c757d;
+    box-shadow: none;
     outline: 0;
 }
 

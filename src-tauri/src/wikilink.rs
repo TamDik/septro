@@ -81,22 +81,6 @@ impl WikiLink {
         Self::new(&wikilink.namespace, wikilink.wiki_type, &wikilink.name)
     }
 
-    pub fn page(namespace: impl Into<String>, name: impl Into<String>) -> Self {
-        Self::new(namespace, WikiType::Page, name)
-    }
-
-    pub fn file(namespace: impl Into<String>, name: impl Into<String>) -> Self {
-        Self::new(namespace, WikiType::File, name)
-    }
-
-    pub fn category(namespace: impl Into<String>, name: impl Into<String>) -> Self {
-        Self::new(namespace, WikiType::Category, name)
-    }
-
-    pub fn special(namespace: impl Into<String>, name: impl Into<String>) -> Self {
-        Self::new(namespace, WikiType::Special, name)
-    }
-
     pub fn get_query(&self, key: &str) -> Option<&String> {
         self.queries.get(&key.to_string())
     }

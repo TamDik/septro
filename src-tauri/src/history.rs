@@ -133,7 +133,7 @@ impl History {
 
     pub fn save(&self) -> Result<(), std::io::Error> {
         let root_dir = &self.root_dir;
-        fs::create_dir_all(&root_dir).unwrap_or_else(|why| println!("{:?}", why.kind()));
+        fs::create_dir_all(&root_dir).unwrap_or_else(|why| panic!("{:?}", why.kind()));
 
         // save current.json
         let file = fs::File::create(root_dir.join("current.json"))?;
